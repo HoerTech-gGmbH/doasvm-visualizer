@@ -81,7 +81,7 @@ function toggle_rate_limiting() {
 
 //Toggle beamformer
 function toggle_beamforming() {
-    beamformer=d3.select('#beamformer').node().checked
+    var beamformer=d3.select('#beamformer').node().checked
     ws.send(JSON.stringify({beamformer:beamformer}))
 }
 
