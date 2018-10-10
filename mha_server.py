@@ -13,13 +13,14 @@ class LoopingWebSocket(server_common.MyWebSocketHandler):
         # grab our private keyword arguments
         self.mha_host = kwargs.pop('mha_host')
         self.mha_port = kwargs.pop('mha_port')
+        self.interval = None
         self.pooling_id = kwargs.pop('pooling_id')
         pool_path = kwargs.pop('pool_path')
 
         # If --pool-path was not passed, default to looking for a monitoring
         # plug-in in the same namespace as the acPooling_wave plug-in.
         if not pool_path:
-            with MHAConnection(self.mha_host, self.mha_port) as mha_conn:
+            with MHAConnection(self.mha_host, self.mha_port, self.interval) as mha_conn:
                 plugin_path = mha_conn.find_id(self.pooling_id)[0]
                 mon_path = plugin_path.replace(self.pooling_id, b'doasvm_mon')
                 pool_path = mon_path + b'.pool'
@@ -30,7 +31,7 @@ class LoopingWebSocket(server_common.MyWebSocketHandler):
 
     def _send_data(self):
 
-        with MHAConnection(self.mha_host, self.mha_port) as mha_conn:
+        with MHAConnection(self.mha_host, self.mha_port, self.interval) as mha_conn:
             p = mha_conn.get_val_converted(self._pool_path)
             self.write_message(json.dumps({'data': p}))
 
@@ -43,31 +44,34 @@ class LoopingWebSocket(server_common.MyWebSocketHandler):
                 print('Unknown command "{}"'.format(message['command']))
         elif 'new_pooling_wndlen' in message:
             print('Pooling wndlen = {}'.format(message['new_pooling_wndlen']))
-            with MHAConnection(self.mha_host, self.mha_port) as mha_conn:
+            with MHAConnection(self.mha_host, self.mha_port, self.interval) as mha_conn:
                 plugin_path = mha_conn.find_id(self.pooling_id)[0]
                 mha_conn.set_val(plugin_path + b'.pooling_wndlen',
                                  message['new_pooling_wndlen'])
         elif 'new_pooling_alpha' in message:
             print('Pooling alpha = {}'.format(message['new_pooling_alpha']))
-            with MHAConnection(self.mha_host, self.mha_port) as mha_conn:
+            with MHAConnection(self.mha_host, self.mha_port, self.interval) as mha_conn:
                 plugin_path = mha_conn.find_id(self.pooling_id)[0]
                 mha_conn.set_val(plugin_path + b'.alpha',
                                  message['new_pooling_alpha'])
         elif 'new_pooling_type' in message:
             print('Pooling type = {}'.format(message['new_pooling_type']))
-            with MHAConnection(self.mha_host, self.mha_port) as mha_conn:
+            with MHAConnection(self.mha_host, self.mha_port, self.interval) as mha_conn:
                 plugin_path = mha_conn.find_id(self.pooling_id)[0]
                 mha_conn.set_val(plugin_path + b'.pooling_type',
                                  message['new_pooling_type'])
         elif 'beamformer' in message:
             print('Beamformer = {}'.format(message['beamformer']))
-            with MHAConnection(self.mha_host, self.mha_port) as mha_conn:
+            with MHAConnection(self.mha_host, self.mha_port, self.interval) as mha_conn:
                 if(message['beamformer']==False):
                     mha_conn.set_val(b'mha.doachain.post.select',"NoBf")
                 elif(message['beamformer']==True):
                      mha_conn.set_val(b'mha.doachain.post.select',"Bf")
                 else:
                     print('Unknown message "{}"'.format(message))
+        elif 'new_interval' in message:
+            print('Interval = {}'.format(message['new_interval']))
+            self.interval = message['new_interval']
         else:
             print('Unknown message "{}"'.format(message))
 
@@ -119,7 +123,8 @@ if __name__ == '__main__':
     )
     args = parser.parse_args()
 
-    with MHAConnection(args.mha_host, args.mha_port) as mha_conn:
+    # abort the connection after a 5 second timeout
+    with MHAConnection(args.mha_host, args.mha_port, 5) as mha_conn:
         plugin_path = mha_conn.find_id(args.classification_id)
         if not plugin_path:
             classification_id = args.classification_id.decode()

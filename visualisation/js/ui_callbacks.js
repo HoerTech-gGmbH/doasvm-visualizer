@@ -5,6 +5,7 @@ function start_interval() {
     stop_interval();
     send_new_pooling_wndlen();
     send_new_pooling_type();
+    send_new_interval(interval);
 
     // periodically retrieve data from the Python server
     interval_id = setInterval(function() {
@@ -42,6 +43,10 @@ function send_new_pooling_alpha() {
 function send_new_pooling_type() {
     var new_pooling_type = d3.select('#poolingtype').node().value;
     ws.send(JSON.stringify({new_pooling_type: new_pooling_type}));
+}
+
+function send_new_interval(interval) {
+    ws.send(JSON.stringify({new_interval: interval/1000}));
 }
 
 // update the ratelimit-status span
