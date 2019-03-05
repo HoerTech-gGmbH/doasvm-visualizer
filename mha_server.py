@@ -23,9 +23,7 @@ class LoopingWebSocket(server_common.MyWebSocketHandler):
             with MHAConnection(self.mha_host, self.mha_port, self.interval) as mha_conn:
                 plugin_path = mha_conn.find_id(self.pooling_id)[0]
                 mon_path = plugin_path.replace(self.pooling_id, b'doasvm_mon')
-                pool_path = mon_path + b'.pool'
-
-        self._pool_path = pool_path
+                self._pool_path = mon_path + b'.pool'
 
         super(LoopingWebSocket, self).__init__(*args, **kwargs)
 
