@@ -118,10 +118,6 @@ ws.onopen = function() {
         twod_onopen();
     }
 
-    if ( typeof video_onopen != "undefined" ) {
-        video_onopen();
-    }
-
     if ( typeof pseudo3d_onopen != "undefined" ) {
         pseudo3d_onopen();
     }
