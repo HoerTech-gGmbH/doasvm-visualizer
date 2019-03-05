@@ -76,7 +76,7 @@ class LoopingWebSocket(server_common.MyWebSocketHandler):
             else:
                 print('Unknown message "{}"'.format(message))
         except Exception as e:
-            print("Error sending message \"{}\": {}".format(message, e))
+            print("Error handling message \"{}\": {}".format(message, e))
 
 if __name__ == '__main__':
 
