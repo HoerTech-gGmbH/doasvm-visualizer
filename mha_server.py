@@ -51,19 +51,19 @@ class LoopingWebSocket(server_common.MyWebSocketHandler):
                 with MHAConnection(self.mha_host, self.mha_port, self.interval) as mha_conn:
                     plugin_path = mha_conn.find_id(self.pooling_id)[0]
                     mha_conn.set_val(plugin_path + b'.pooling_wndlen',
-                                message['new_pooling_wndlen'])
+                                     message['new_pooling_wndlen'])
             elif 'new_pooling_alpha' in message:
                 print('Pooling alpha = {}'.format(message['new_pooling_alpha']))
                 with MHAConnection(self.mha_host, self.mha_port, self.interval) as mha_conn:
                     plugin_path = mha_conn.find_id(self.pooling_id)[0]
                     mha_conn.set_val(plugin_path + b'.alpha',
-                                message['new_pooling_alpha'])
+                                     message['new_pooling_alpha'])
             elif 'new_pooling_type' in message:
                 print('Pooling type = {}'.format(message['new_pooling_type']))
                 with MHAConnection(self.mha_host, self.mha_port, self.interval) as mha_conn:
                     plugin_path = mha_conn.find_id(self.pooling_id)[0]
                     mha_conn.set_val(plugin_path + b'.pooling_type',
-                                message['new_pooling_type'])
+                                     message['new_pooling_type'])
             elif 'beamformer' in message:
                 print('Beamformer = {}'.format(message['beamformer']))
                 with MHAConnection(self.mha_host, self.mha_port, self.interval) as mha_conn:
