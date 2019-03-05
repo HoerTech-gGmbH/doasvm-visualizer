@@ -17,13 +17,15 @@ class LoopingWebSocket(server_common.MyWebSocketHandler):
         self.pooling_id = kwargs.pop('pooling_id')
         pool_path = kwargs.pop('pool_path')
 
+        # cache the location of the pooling plug-in
+        with MHAConnection(self.mha_host, self.mha_port, self.interval) as mha_conn:
+            self._plugin_path = mha_conn.find_id(self.pooling_id)[0]
+
         # If --pool-path was not passed, default to looking for a monitoring
         # plug-in in the same namespace as the acPooling_wave plug-in.
         if not pool_path:
-            with MHAConnection(self.mha_host, self.mha_port, self.interval) as mha_conn:
-                plugin_path = mha_conn.find_id(self.pooling_id)[0]
-                mon_path = plugin_path.replace(self.pooling_id, b'doasvm_mon')
-                self._pool_path = mon_path + b'.pool'
+            mon_path = self._plugin_path.replace(self.pooling_id, b'doasvm_mon')
+            self._pool_path = mon_path + b'.pool'
 
         super(LoopingWebSocket, self).__init__(*args, **kwargs)
 
@@ -47,20 +49,17 @@ class LoopingWebSocket(server_common.MyWebSocketHandler):
             elif 'new_pooling_wndlen' in message:
                 print('Pooling wndlen = {}'.format(message['new_pooling_wndlen']))
                 with MHAConnection(self.mha_host, self.mha_port, self.interval) as mha_conn:
-                    plugin_path = mha_conn.find_id(self.pooling_id)[0]
-                    mha_conn.set_val(plugin_path + b'.pooling_wndlen',
+                    mha_conn.set_val(self._plugin_path + b'.pooling_wndlen',
                                      message['new_pooling_wndlen'])
             elif 'new_pooling_alpha' in message:
                 print('Pooling alpha = {}'.format(message['new_pooling_alpha']))
                 with MHAConnection(self.mha_host, self.mha_port, self.interval) as mha_conn:
-                    plugin_path = mha_conn.find_id(self.pooling_id)[0]
-                    mha_conn.set_val(plugin_path + b'.alpha',
+                    mha_conn.set_val(self._plugin_path + b'.alpha',
                                      message['new_pooling_alpha'])
             elif 'new_pooling_type' in message:
                 print('Pooling type = {}'.format(message['new_pooling_type']))
                 with MHAConnection(self.mha_host, self.mha_port, self.interval) as mha_conn:
-                    plugin_path = mha_conn.find_id(self.pooling_id)[0]
-                    mha_conn.set_val(plugin_path + b'.pooling_type',
+                    mha_conn.set_val(self._plugin_path + b'.pooling_type',
                                      message['new_pooling_type'])
             elif 'beamformer' in message:
                 print('Beamformer = {}'.format(message['beamformer']))
