@@ -25,7 +25,8 @@ class LoopingWebSocket(server_common.MyWebSocketHandler):
         # plug-in in the same namespace as the acPooling_wave plug-in.
         if not pool_path:
             mon_path = self._plugin_path.replace(self.pooling_id, b'doasvm_mon')
-            self._pool_path = mon_path + b'.pool'
+            pool_path = mon_path + b'.pool'
+        self._pool_path = pool_path
 
         super(LoopingWebSocket, self).__init__(*args, **kwargs)
 
