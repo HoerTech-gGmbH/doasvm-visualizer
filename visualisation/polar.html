@@ -21,8 +21,8 @@
             </select>
             <label for="polarstyle">Style</label>
         <div>
-        <div id="video-container" hidden=true>
-            <video autoplay=true width=960></video>
+        <div id="video-container" hidden>
+            <video autoplay width=960></video>
         </div>
         <div id="d3plot"></div>
         <div id="input">
@@ -47,10 +47,10 @@
             <label for="poolingtype">Type</label>
         </div>
         <div id="rate-limit-controls">
-            <input id="ratelimit" type="checkbox" checked=false onchange="toggle_rate_limiting()" name="ratelimit">
+            <input id="ratelimit" type="checkbox" onchange="toggle_rate_limiting()" name="ratelimit">
                 Activate rate limiting
             </input>
-            <input id="show-ratelimit-status" type="checkbox" checked=true onchange="toggle_rate_limit_display()" name="show-ratelimit-status">
+            <input id="show-ratelimit-status" type="checkbox" checked onchange="toggle_rate_limit_display()" name="show-ratelimit-status">
                 Display rate limiting status
             </input>
             <br/>
@@ -60,7 +60,7 @@
             </span>
         </div>
         <div id="beamformer">
-            <input id="beamformer" type="checkbox" checked=false onchange="toggle_beamforming()" name="beamformer">
+            <input id="beamformer" type="checkbox" onchange="toggle_beamforming()" name="beamformer">
             Activate beamformer
             </input>
         </div>
