@@ -124,9 +124,10 @@ HTTP is for serving the web applications, and the WebSocket is for sending data
 and commands.
 
 The TCP server is identical to the MHA server, only that it receives data from
-a TCP client instead of requesting it from an MHA instance.  It was written for
-visualising data from different programming languages — primarily MATLAB, but
-any language that supports TCP/IP will work, e.g., Python.
+a TCP client instead of requesting it from an MHA instance.  It was written as
+a debugging tool for visualising data from different programming languages —
+primarily MATLAB, but any language that supports TCP/IP will work, e.g.,
+Python.
 
 Two support files are provided: `connect_to_webapp.m` for MATLAB and Octave,
 and `connect_to_webapp.py` for Python.  Both work basically the same way: they
