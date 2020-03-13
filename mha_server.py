@@ -100,7 +100,7 @@ if __name__ == '__main__':
     )
     parser.add_argument(
         '--classification-id',
-        default=b'doasvm_classification',
+        default=b'svm',
         type=lambda s: (s if type(s) == bytes else s.encode()),
         help="""The ID of a doasvm_classification instance.  This is used to
         fetch the "angles" variable in order to pass additional parameters to
@@ -109,7 +109,7 @@ if __name__ == '__main__':
     )
     parser.add_argument(
         '--pooling-id',
-        default=b'acPooling_wave',
+        default=b'pool',
         type=lambda s: (s if type(s) == bytes else s.encode()),
         help="""The ID of the desired acPooling_wave instance.  This is the
         instance that will be controlled from the web app.
@@ -117,7 +117,7 @@ if __name__ == '__main__':
     )
     parser.add_argument(
         '--pool-path',
-        default=b'',
+        default=b'mha.doachain.doasvm_mon.pool',
         type=lambda s: (s if type(s) == bytes else s.encode()),
         help="""The full path to the desired "pool" variable to visualise.  If
         unset, it is assumed that a doasvm_mon instance (named "doasvm_mon")

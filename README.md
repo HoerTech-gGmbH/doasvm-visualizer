@@ -2,20 +2,17 @@
 
 ## Introduction
 
-This project is at its core an implementation of a localisation algorithm based
-on GCC-PHAT (see [0] and [1]).  This is done as a triplet of plug-ins for openMHA.
+This repository contains a tool for visualizing a localisation algorithm based
+on GCC-PHAT (see [0] and [1]).  It utilizes a triplet of plug-ins written for
+[openMHA](http://www.openmha.org/):
 
 - feature extraction, i.e., the actual GCC-PHAT computation,
 - classification (linear SVM followed by a sigmoid transform), and
 - pooling (i.e., grouping values over a specified duration, by sum, maximum, or
   mean).
 
-Furthermore, this project contains an assortment of (vaguely) related software,
-namely:
-
-- a Python class for communicating with an openMHA instance
-- an HTML5 based visualisation of the localisation
-
+Furthermore, this project contains a Python class for communicating with an
+openMHA instance.
 
 [0] C. Knapp and G. C. Carter, “The generalized correlation method for
 estimation of time delay,” IEEE Transactions on Acoustics, Speech and Signal
@@ -26,22 +23,18 @@ probabilistic acoustic source localization,” In: International Workshop on
 Acoustic Echo and Noise Control (IWAENC 2014), pp. 100 -- 104, Antibes, France,
 2014
 
-## Project Structure
-
-The project is roughly structured as follows:
-
-- The Python class and the HTML5 based visualisation are both in the directory
-  `visualisation_web/`.
-
 ## Installation
 
 The preferred way of installing this project is, naturally, "The Easy Way".
-If you cannot use conda for some reason, see "Getting the Python Dependencies 
+If you cannot use conda for some reason, see "Getting the Python Dependencies
 Without Conda".
 
-### The Easy Way
+In any case, you will require openMHA, or MHA if you happen to have a
+commercial license.  See also its [corresponding
+example](https://github.com/HoerTech-gGmbH/openMHA/tree/master/examples/09-localizer-steering-beamformer)
+for how to set it up appropriately.
 
-You will, of course, require an openMHA installation.
+### The Easy Way
 
 The next step is installing the dependencies of the visualisation itself.  The
 recommended way is to use [conda](http://conda.pydata.org/docs/).  For this
@@ -51,9 +44,8 @@ By executing the commands
     conda env create
     conda activate doasvm_demo
 
-in the directory where this README_visualization.md file is located.
-A conda environment that is identical to the one used to develop and
-test this project will be created and activated.
+in this project's top-level directory.  A conda environment that is identical
+to the one used to develop and test this project will be created and activated.
 
 If you wish to send data to the TCP server (see "Structure of the
 Visualisation" below) from within MATLAB, you will additionally require the
@@ -85,18 +77,21 @@ description of the Python servers.
 
 ### Launching the Visualisation
 
-To start the visualisation using the default options, simply run
+To start the visualisation using the default options, which are optimized for
+the corresponding openMHA
+[example](https://github.com/HoerTech-gGmbH/openMHA/tree/master/examples/09-localizer-steering-beamformer),
+simply run
 
-    python visualisation_web/mha_server.py
+    python mha_server.py
 
 Or, if you wish to feed your own data into the visualisation, run
 
-    python visualisation_web/tcp_server.py
+    python tcp_server.py
 
 This will start the server and open the visualisation in a web browser.  See
-the output of `python visualisation_web/mha_server.py --help` or `python
-visualisation_web/tcp_server.py --help` for a list of options (e.g., the MHA's
-host and port), and read on for a more thorough description.
+the output of `python mha_server.py --help` or `python tcp_server.py --help`
+for a list of options (e.g., the MHA's host and port), and read on for a more
+thorough description.
 
 ### Structure of the Visualisation
 
@@ -116,12 +111,11 @@ over HTTP (thus enabling remote viewing), and it acts as a *bridge* between the
 web application and an MHA instance.  For the latter, it receives commands from
 the web app over the aforementioned WebSocket, and communicates with an MHA
 instance over TCP via MHA's simple network protocol (see the file
-`visualisation_web/MHAConnection.py` for the details).  Note that the TCP
-connection is made on-demand, in order to accommodate other MHA clients, since
-the MHA only supports a single TCP connection.  However, this does not appear
-to add an appreciable amount of overhead.  Both the HTTP and WebSocket
-components are implemented with the [Tornado](http://www.tornadoweb.org/)
-Python library.
+`MHAConnection.py` for the details).  Note that the TCP connection is made
+on-demand, in order to accommodate other MHA clients, since the MHA only
+supports a single TCP connection.  However, this does not appear to add an
+appreciable amount of overhead.  Both the HTTP and WebSocket components are
+implemented with the [Tornado](http://www.tornadoweb.org/) Python library.
 
 In summary, the basic network structure looks like this:
 
@@ -135,19 +129,19 @@ HTTP is for serving the web applications, and the WebSocket is for sending data
 and commands.
 
 The TCP server is identical to the MHA server, only that it receives data from
-a TCP client instead of requesting it from an MHA instance.  It was written for
-visualising data from different programming languages — primarily MATLAB, but
-any language that supports TCP/IP will work, e.g., Python.
+a TCP client instead of requesting it from an MHA instance.  It was written as
+a debugging tool for visualising data from different programming languages —
+primarily MATLAB, but any language that supports TCP/IP will work, e.g.,
+Python.
 
-Two support files are provided: `visualisation_web/connect_to_webapp.m` for
-MATLAB and Octave, and `visualisation_web/connect_to_webapp.py` for Python.
-Both work basically the same way: they return a function (in MATLAB/Octave a
-function *handle*) with which you can send data to the TCP server, along with
-the object that encapsulates the TCP connection.  Additionally, the test file
-`./tools/test_tcp_server.m` is provided for MATLAB/Octave, which sends test
-data to the TCP server. See the documentation in the aforementioned files for
-more information (e.g., `help test_tcp_server`,
-`pydoc visualisation_web/connect_to_webapp.py`).
+Two support files are provided: `connect_to_webapp.m` for MATLAB and Octave,
+and `connect_to_webapp.py` for Python.  Both work basically the same way: they
+return a function (in MATLAB/Octave a function *handle*) with which you can
+send data to the TCP server, along with the object that encapsulates the TCP
+connection.  Additionally, the test file `./tools/test_tcp_server.m` is
+provided for MATLAB/Octave, which sends test data to the TCP server. See the
+documentation in the aforementioned files for more information (e.g., `help
+test_tcp_server`, `pydoc connect_to_webapp.py`).
 
 ### The Visualisation Web Applications
 
@@ -174,7 +168,7 @@ relatively brief.
 
 As mentioned above, the web-apps are served over HTTP, so they are accessed via
 URLs.  Since these URLs can be somewhat complex due to the query strings used
-to parameterise the web-apps, the HTTP server knows shortcuts for each plot
+to parameterize the web-apps, the HTTP server knows shortcuts for each plot
 type: "2d", "pseudo3d", "polar", and "tiled".  They can be used in a URL like
 so:
 
@@ -192,7 +186,7 @@ The other plot types show up as clickable URLs, so it is easy to switch to a
 different type of visualisation, or to open several in different browser
 windows and/or tabs.  Note, however, that the Python servers and the web-apps
 are not designed for this, so it might be too slow to be usable (except for
-tabs, where it appears that modern browsers optimise away inactive tabs).
+tabs, where it appears that modern browsers optimize away inactive tabs).
 
 #### Common controls
 
@@ -363,11 +357,11 @@ the different controls.
 
 You can change the look of the visualisation (line colors, line thickness, font
 size, etc.) by creating a file with the name
-`visualisation_web/visualisation/css/site_custom.css`.  This file is loaded
-after all other CSS files, thus it will override all default styles, with the
-exception of styles that are dynamically computed via JavaScript (but it
-doesn't make sense to override those anyway).  If it does not exist, then the
-server will return a "file not found" error and nothing will happen.
+`visualisation/css/site_custom.css`.  This file is loaded after all other CSS
+files, thus it will override all default styles, with the exception of styles
+that are dynamically computed via JavaScript (but it doesn't make sense to
+override those anyway).  If it does not exist, then the server will return a
+"file not found" error and nothing will happen.
 
 #### Security Concerns
 
