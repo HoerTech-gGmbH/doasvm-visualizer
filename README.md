@@ -26,7 +26,7 @@ Acoustic Echo and Noise Control (IWAENC 2014), pp. 100 -- 104, Antibes, France,
 ## Installation
 
 The preferred way of installing this project is, naturally, "The Easy Way".
-If you cannot use conda for some reason, see "Getting the Python Dependencies 
+If you cannot use conda for some reason, see "Getting the Python Dependencies
 Without Conda".
 
 In any case, you will require openMHA, or MHA if you happen to have a
