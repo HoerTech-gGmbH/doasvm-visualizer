@@ -63,9 +63,9 @@ class LoopingWebSocket(server_common.MyWebSocketHandler):
             elif 'beamformer' in message:
                 print('Beamformer = {}'.format(message['beamformer']))
                 with MHAConnection(self.mha_host, self.mha_port, self.interval) as mha_conn:
-                    if(message['beamformer'] is False):
+                    if message['beamformer'] is False:
                         mha_conn.set_val(b'mha.doachain.post.select', "NoBf")
-                    elif(message['beamformer'] is True):
+                    elif message['beamformer'] is True:
                         mha_conn.set_val(b'mha.doachain.post.select', "Bf")
                     else:
                         print('Unknown message "{}"'.format(message))
