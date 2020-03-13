@@ -30,7 +30,9 @@ If you cannot use conda for some reason, see "Getting the Python Dependencies
 Without Conda".
 
 In any case, you will require openMHA, or MHA if you happen to have a
-commercial license.
+commercial license.  See also its [corresponding
+example](https://github.com/HoerTech-gGmbH/openMHA/tree/master/examples/09-localizer-steering-beamformer)
+for how to set it up appropriately.
 
 ### The Easy Way
 
@@ -75,7 +77,10 @@ description of the Python servers.
 
 ### Launching the Visualisation
 
-To start the visualisation using the default options, simply run
+To start the visualisation using the default options, which are optimized for
+the corresponding openMHA
+[example](https://github.com/HoerTech-gGmbH/openMHA/tree/master/examples/09-localizer-steering-beamformer),
+simply run
 
     python mha_server.py
 
