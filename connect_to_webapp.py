@@ -1,11 +1,5 @@
 from collections import Sequence
 import socket
-import sys
-
-# Python 3 has no unicode type, but we need to test for it in Python 2, so
-# create an alias.
-if sys.version_info.major != 2:
-    unicode = str
 
 
 def connect_to_webapp(host="localhost", port=9990):
@@ -32,8 +26,7 @@ def connect_to_webapp(host="localhost", port=9990):
 
     def send_data(data):
 
-        if not isinstance(data, Sequence) or isinstance(data, (str, bytes,
-                                                               unicode)):
+        if not isinstance(data, Sequence) or isinstance(data, (str, bytes)):
             raise ValueError('Invalid data type "{}".'.format(type(data)))
 
         data_str = str(data).strip('[]()').replace(',', '')

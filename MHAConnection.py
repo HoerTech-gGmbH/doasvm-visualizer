@@ -1,15 +1,9 @@
 from ast import literal_eval
 from collections import Sequence, MutableSequence
 from encodings.utf_8 import encode as encode_utf8
-import sys
 import telnetlib
 
-if sys.version_info.major == 2:
-    from string import maketrans
-else:
-    maketrans = str.maketrans
-
-round_to_square_brackets = maketrans('()', '[]')
+round_to_square_brackets = str.maketrans('()', '[]')
 
 
 class MHAConnection(telnetlib.Telnet):
