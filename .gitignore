@@ -1,0 +1,5 @@
+# Python bytecode files
+*.py[co]
+
+# Vim backup files
+*~
