@@ -168,7 +168,7 @@ relatively brief.
 
 As mentioned above, the web-apps are served over HTTP, so they are accessed via
 URLs.  Since these URLs can be somewhat complex due to the query strings used
-to parameterise the web-apps, the HTTP server knows shortcuts for each plot
+to parameterize the web-apps, the HTTP server knows shortcuts for each plot
 type: "2d", "pseudo3d", "polar", and "tiled".  They can be used in a URL like
 so:
 
@@ -186,7 +186,7 @@ The other plot types show up as clickable URLs, so it is easy to switch to a
 different type of visualisation, or to open several in different browser
 windows and/or tabs.  Note, however, that the Python servers and the web-apps
 are not designed for this, so it might be too slow to be usable (except for
-tabs, where it appears that modern browsers optimise away inactive tabs).
+tabs, where it appears that modern browsers optimize away inactive tabs).
 
 #### Common controls
 
