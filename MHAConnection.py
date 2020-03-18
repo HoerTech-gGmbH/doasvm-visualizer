@@ -22,8 +22,8 @@ class MHAConnection(telnetlib.Telnet):
         """
 
         self.write(buffer)
-        err_code, _match, resp = self.expect([b'\(MHA:success\)',
-                                              b'\(MHA:failure\)'])
+        err_code, _match, resp = self.expect([br'\(MHA:success\)',
+                                              br'\(MHA:failure\)'])
         if err_code == 0:
             return resp.rpartition(b'(MHA:success)')[0].strip()
         else:

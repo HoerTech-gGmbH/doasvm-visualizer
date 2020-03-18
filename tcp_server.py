@@ -54,7 +54,7 @@ class TCPListener(tcpserver.TCPServer):
 
         # When sending data via java_tcp(), Java stores the chars in *two*
         # bytes.  One of them is usually a NULL byte, so filter those out, too.
-        data = re.sub('\s+', ', ', data.strip().decode().replace('\0', ''))
+        data = re.sub(r'\s+', ', ', data.strip().decode().replace('\0', ''))
         data = literal_eval('[' + data + ']')
         if len(data) == self._model_length:
             _p[0] = data
