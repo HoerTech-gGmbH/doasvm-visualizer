@@ -30,6 +30,11 @@ class LoopingWebSocket(server_common.MyWebSocketHandler):
 
         super(LoopingWebSocket, self).__init__(*args, **kwargs)
 
+    def _reopen_mhaconn(self):
+
+        self._mha_conn.close()
+        self._mha_conn.open(self.mha_host, self.mha_port, self.interval)
+
     def _send_data(self):
 
         try:
@@ -37,6 +42,9 @@ class LoopingWebSocket(server_common.MyWebSocketHandler):
             self.write_message(json.dumps({'data': p}))
         except ValueError as e:
             print(f"Error sending data: {e}")
+        except TimeoutError as e:
+            print(f"Connection timed out ({e}), attempting to reopen.")
+            self._reopen_mhacon()
 
     def on_message(self, message):
         message = json.loads(message)
@@ -71,6 +79,12 @@ class LoopingWebSocket(server_common.MyWebSocketHandler):
                 self.interval = message['new_interval']
             else:
                 print('Unknown message "{}"'.format(message))
+        except TimeoutError as e:
+            print(f"Connection timed out ({e}), attempting to reopen.")
+            self._reopen_mhacon()
+        except BrokenPipeError as e:
+            print(f"Connection broekn ({e}), attempting to reopen.")
+            self._reopen_mhacon()
         except Exception as e:
             print("Error handling message \"{}\": {}".format(message, e))
 
