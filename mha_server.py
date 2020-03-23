@@ -35,7 +35,7 @@ class LoopingWebSocket(server_common.MyWebSocketHandler):
             p = self._mha_conn.get_val_converted(self._pool_path)
             self.write_message(json.dumps({'data': p}))
         except ValueError as e:
-            print("Error sending data: {}".format(e))
+            print(f"Error sending data: {e}")
 
     def on_message(self, message):
         message = json.loads(message)
@@ -46,19 +46,19 @@ class LoopingWebSocket(server_common.MyWebSocketHandler):
                 else:
                     print('Unknown command "{}"'.format(message['command']))
             elif 'new_pooling_wndlen' in message:
-                print('Pooling wndlen = {}'.format(message['new_pooling_wndlen']))
+                print(f'Pooling wndlen = {message["new_pooling_wndlen"]}')
                 self._mha_conn.set_val(self._plugin_path + b'.pooling_wndlen',
                                        message['new_pooling_wndlen'])
             elif 'new_pooling_alpha' in message:
-                print('Pooling alpha = {}'.format(message['new_pooling_alpha']))
+                print(f'Pooling alpha = {message["new_pooling_alpha"]}')
                 self._mha_conn.set_val(self._plugin_path + b'.alpha',
                                        message['new_pooling_alpha'])
             elif 'new_pooling_type' in message:
-                print('Pooling type = {}'.format(message['new_pooling_type']))
+                print(f'Pooling type = {message["new_pooling_type"]}')
                 self._mha_conn.set_val(self._plugin_path + b'.pooling_type',
                                        message['new_pooling_type'])
             elif 'beamformer' in message:
-                print('Beamformer = {}'.format(message['beamformer']))
+                print(f'Beamformer = {message["beamformer"]}')
                 if message['beamformer'] is False:
                     self._mha_conn.set_val(b'mha.doachain.post.select', "NoBf")
                 elif message['beamformer'] is True:
@@ -66,7 +66,7 @@ class LoopingWebSocket(server_common.MyWebSocketHandler):
                 else:
                     print('Unknown message "{}"'.format(message))
             elif 'new_interval' in message:
-                print('Interval = {}'.format(message['new_interval']))
+                print(f'Interval = {message["new_interval"]}')
                 self.interval = message['new_interval']
             else:
                 print('Unknown message "{}"'.format(message))
