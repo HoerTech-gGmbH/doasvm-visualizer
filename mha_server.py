@@ -23,7 +23,8 @@ class LoopingWebSocket(server_common.MyWebSocketHandler):
         # If --pool-path was not passed, default to looking for a monitoring
         # plug-in in the same namespace as the acPooling_wave plug-in.
         if not pool_path:
-            mon_path = self._plugin_path.replace(self.pooling_id, b'doasvm_mon')
+            mon_path = self._plugin_path.replace(self.pooling_id,
+                                                 b'doasvm_mon')
             pool_path = mon_path + b'.pool'
         self._pool_path = pool_path
 
