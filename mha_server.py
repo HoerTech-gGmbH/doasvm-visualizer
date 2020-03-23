@@ -16,8 +16,9 @@ class LoopingWebSocket(server_common.MyWebSocketHandler):
         pool_path = kwargs.pop('pool_path')
 
         # cache the location of the pooling plug-in
-        with MHAConnection(self.mha_host, self.mha_port, self.interval) as mha_conn:
-            self._plugin_path = mha_conn.find_id(self.pooling_id)[0]
+        self._mha_conn = MHAConnection(self.mha_host, self.mha_port,
+                                       self.interval)
+        self._plugin_path = self._mha_conn.find_id(self.pooling_id)[0]
 
         # If --pool-path was not passed, default to looking for a monitoring
         # plug-in in the same namespace as the acPooling_wave plug-in.
@@ -31,9 +32,8 @@ class LoopingWebSocket(server_common.MyWebSocketHandler):
     def _send_data(self):
 
         try:
-            with MHAConnection(self.mha_host, self.mha_port, self.interval) as mha_conn:
-                p = mha_conn.get_val_converted(self._pool_path)
-                self.write_message(json.dumps({'data': p}))
+            p = self._mha_conn.get_val_converted(self._pool_path)
+            self.write_message(json.dumps({'data': p}))
         except ValueError as e:
             print("Error sending data: {}".format(e))
 
@@ -47,28 +47,24 @@ class LoopingWebSocket(server_common.MyWebSocketHandler):
                     print('Unknown command "{}"'.format(message['command']))
             elif 'new_pooling_wndlen' in message:
                 print('Pooling wndlen = {}'.format(message['new_pooling_wndlen']))
-                with MHAConnection(self.mha_host, self.mha_port, self.interval) as mha_conn:
-                    mha_conn.set_val(self._plugin_path + b'.pooling_wndlen',
-                                     message['new_pooling_wndlen'])
+                self._mha_conn.set_val(self._plugin_path + b'.pooling_wndlen',
+                                       message['new_pooling_wndlen'])
             elif 'new_pooling_alpha' in message:
                 print('Pooling alpha = {}'.format(message['new_pooling_alpha']))
-                with MHAConnection(self.mha_host, self.mha_port, self.interval) as mha_conn:
-                    mha_conn.set_val(self._plugin_path + b'.alpha',
-                                     message['new_pooling_alpha'])
+                self._mha_conn.set_val(self._plugin_path + b'.alpha',
+                                       message['new_pooling_alpha'])
             elif 'new_pooling_type' in message:
                 print('Pooling type = {}'.format(message['new_pooling_type']))
-                with MHAConnection(self.mha_host, self.mha_port, self.interval) as mha_conn:
-                    mha_conn.set_val(self._plugin_path + b'.pooling_type',
-                                     message['new_pooling_type'])
+                self._mha_conn.set_val(self._plugin_path + b'.pooling_type',
+                                       message['new_pooling_type'])
             elif 'beamformer' in message:
                 print('Beamformer = {}'.format(message['beamformer']))
-                with MHAConnection(self.mha_host, self.mha_port, self.interval) as mha_conn:
-                    if message['beamformer'] is False:
-                        mha_conn.set_val(b'mha.doachain.post.select', "NoBf")
-                    elif message['beamformer'] is True:
-                        mha_conn.set_val(b'mha.doachain.post.select', "Bf")
-                    else:
-                        print('Unknown message "{}"'.format(message))
+                if message['beamformer'] is False:
+                    self._mha_conn.set_val(b'mha.doachain.post.select', "NoBf")
+                elif message['beamformer'] is True:
+                    self._mha_conn.set_val(b'mha.doachain.post.select', "Bf")
+                else:
+                    print('Unknown message "{}"'.format(message))
             elif 'new_interval' in message:
                 print('Interval = {}'.format(message['new_interval']))
                 self.interval = message['new_interval']
