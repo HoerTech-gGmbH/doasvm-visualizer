@@ -109,10 +109,7 @@ over HTTP, and it acts as a *bridge* between the web application and an MHA
 instance.  For the latter, it receives commands from the web app over the
 aforementioned WebSocket, and communicates with an MHA instance over TCP via
 MHA's simple network protocol (see the file `MHAConnection.py` for the
-details).  Note that the TCP connection is made on-demand, in order to
-accommodate other MHA clients, since the MHA only supports a single TCP
-connection.  However, this does not appear to add an appreciable amount of
-overhead.  Both the HTTP and WebSocket components are implemented with the
+details).  Both the HTTP and WebSocket components are implemented with the
 [Tornado](http://www.tornadoweb.org/) Python library.
 
 In summary, the basic network structure looks like this:
