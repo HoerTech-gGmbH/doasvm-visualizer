@@ -4,6 +4,24 @@ from MHAConnection import MHAConnection
 import server_common
 
 
+def handle_conn_errors(func):
+
+    def _func(*args, **kwargs):
+        try:
+            func(*args, **kwargs)
+        except TimeoutError as e:
+            print(f"Connection timed out ({e}), attempting to reopen.")
+            func.__self__._reopen_mhacon()
+        except BrokenPipeError as e:
+            print(f"Connection broekn ({e}), attempting to reopen.")
+            func.__self__._reopen_mhacon()
+        except Exception as e:
+            print("Error handling message \"{}\": {}".format(
+                (args if args else kwargs), e
+            ))
+    return _func
+
+
 class LoopingWebSocket(server_common.MyWebSocketHandler):
 
     def __init__(self, *args, **kwargs):
@@ -46,45 +64,38 @@ class LoopingWebSocket(server_common.MyWebSocketHandler):
             print(f"Connection timed out ({e}), attempting to reopen.")
             self._reopen_mhacon()
 
+    @handle_conn_errors
     def on_message(self, message):
         message = json.loads(message)
-        try:
-            if 'command' in message:
-                if message['command'] == 'send_data':
-                    self._send_data()
-                else:
-                    print('Unknown command "{}"'.format(message['command']))
-            elif 'new_pooling_wndlen' in message:
-                print(f'Pooling wndlen = {message["new_pooling_wndlen"]}')
-                self._mha_conn.set_val(self._plugin_path + b'.pooling_wndlen',
-                                       message['new_pooling_wndlen'])
-            elif 'new_pooling_alpha' in message:
-                print(f'Pooling alpha = {message["new_pooling_alpha"]}')
-                self._mha_conn.set_val(self._plugin_path + b'.alpha',
-                                       message['new_pooling_alpha'])
-            elif 'new_pooling_type' in message:
-                print(f'Pooling type = {message["new_pooling_type"]}')
-                self._mha_conn.set_val(self._plugin_path + b'.pooling_type',
-                                       message['new_pooling_type'])
-            elif 'beamformer' in message:
-                print(f'Beamformer = {message["beamformer"]}')
-                self._mha_conn.set_val(
-                    b'mha.doachain.post.select',
-                    ("Bf" if message['beamformer'] else "NoBf")
-                )
-            elif 'new_interval' in message:
-                print(f'Interval = {message["new_interval"]}')
-                self.interval = message['new_interval']
+
+        if 'command' in message:
+            if message['command'] == 'send_data':
+                self._send_data()
             else:
-                print('Unknown message "{}"'.format(message))
-        except TimeoutError as e:
-            print(f"Connection timed out ({e}), attempting to reopen.")
-            self._reopen_mhacon()
-        except BrokenPipeError as e:
-            print(f"Connection broekn ({e}), attempting to reopen.")
-            self._reopen_mhacon()
-        except Exception as e:
-            print("Error handling message \"{}\": {}".format(message, e))
+                print('Unknown command "{}"'.format(message['command']))
+        elif 'new_pooling_wndlen' in message:
+            print(f'Pooling wndlen = {message["new_pooling_wndlen"]}')
+            self._mha_conn.set_val(self._plugin_path + b'.pooling_wndlen',
+                                   message['new_pooling_wndlen'])
+        elif 'new_pooling_alpha' in message:
+            print(f'Pooling alpha = {message["new_pooling_alpha"]}')
+            self._mha_conn.set_val(self._plugin_path + b'.alpha',
+                                   message['new_pooling_alpha'])
+        elif 'new_pooling_type' in message:
+            print(f'Pooling type = {message["new_pooling_type"]}')
+            self._mha_conn.set_val(self._plugin_path + b'.pooling_type',
+                                   message['new_pooling_type'])
+        elif 'beamformer' in message:
+            print(f'Beamformer = {message["beamformer"]}')
+            self._mha_conn.set_val(
+                b'mha.doachain.post.select',
+                ("Bf" if message['beamformer'] else "NoBf")
+            )
+        elif 'new_interval' in message:
+            print(f'Interval = {message["new_interval"]}')
+            self.interval = message['new_interval']
+        else:
+            print('Unknown message "{}"'.format(message))
 
 
 if __name__ == '__main__':
