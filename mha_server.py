@@ -72,8 +72,6 @@ class LoopingWebSocket(server_common.MyWebSocketHandler):
                     self._mha_conn.set_val(b'mha.doachain.post.select', "NoBf")
                 elif message['beamformer'] is True:
                     self._mha_conn.set_val(b'mha.doachain.post.select', "Bf")
-                else:
-                    print('Unknown message "{}"'.format(message))
             elif 'new_interval' in message:
                 print(f'Interval = {message["new_interval"]}')
                 self.interval = message['new_interval']
