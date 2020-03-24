@@ -1,5 +1,6 @@
 # Python bytecode files
 *.py[co]
 
-# Vim backup files
+# Vim backup and swap files
 *~
+.*.sw*
