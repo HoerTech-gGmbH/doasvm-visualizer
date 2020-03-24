@@ -68,10 +68,10 @@ class LoopingWebSocket(server_common.MyWebSocketHandler):
                                        message['new_pooling_type'])
             elif 'beamformer' in message:
                 print(f'Beamformer = {message["beamformer"]}')
-                if message['beamformer'] is False:
-                    self._mha_conn.set_val(b'mha.doachain.post.select', "NoBf")
-                elif message['beamformer'] is True:
-                    self._mha_conn.set_val(b'mha.doachain.post.select', "Bf")
+                self._mha_conn.set_val(
+                    b'mha.doachain.post.select',
+                    ("Bf" if message['beamformer'] else "NoBf")
+                )
             elif 'new_interval' in message:
                 print(f'Interval = {message["new_interval"]}')
                 self.interval = message['new_interval']
