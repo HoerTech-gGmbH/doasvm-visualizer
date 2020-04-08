@@ -27,15 +27,9 @@ function [func, t] = java_tcp(host, port)
 %                   connected.
 
 p = inputParser();
-if exist('OCTAVE_VERSION', 'builtin')
-    p = p.addRequired('host', @ischar);
-    p = p.addRequired('port', @isnumeric);
-    p = p.parse(host, port);
-else
-    p.addRequired('host', @ischar);
-    p.addRequired('port', @isnumeric);
-    p.parse(host, port);
-end
+p.addRequired('host', @ischar);
+p.addRequired('port', @isnumeric);
+p.parse(host, port);
 
 % Create the Java SocketChannel object and open a connection to the specified
 % host and port.
@@ -49,13 +43,8 @@ end
 
 function send(t, data_str)
     p = inputParser();
-    if exist('OCTAVE_VERSION', 'builtin')
-        p = p.addRequired('data_str', @ischar);
-        p = p.parse(data_str);
-    else
-        p.addRequired('data_str', @ischar);
-        p.parse(data_str);
-    end
+    p.addRequired('data_str', @ischar);
+    p.parse(data_str);
 
     % wrap the data in a ByteBuffer object
     java_str = javaObject('java.lang.String', data_str);
