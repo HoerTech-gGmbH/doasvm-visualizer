@@ -1,15 +1,9 @@
 from ast import literal_eval
 from collections import Sequence, MutableSequence
 from encodings.utf_8 import encode as encode_utf8
-import sys
 import telnetlib
 
-if sys.version_info.major == 2:
-    from string import maketrans
-else:
-    maketrans = str.maketrans
-
-round_to_square_brackets = maketrans('()', '[]')
+round_to_square_brackets = str.maketrans('()', '[]')
 
 
 class MHAConnection(telnetlib.Telnet):
@@ -28,13 +22,15 @@ class MHAConnection(telnetlib.Telnet):
         """
 
         self.write(buffer)
-        err_code, _match, resp = self.expect([b'\(MHA:success\)',
-                                              b'\(MHA:failure\)'])
+        err_code, _match, resp = self.expect([br'\(MHA:success\)',
+                                              br'\(MHA:failure\)'])
         if err_code == 0:
             return resp.rpartition(b'(MHA:success)')[0].strip()
         else:
-            raise ValueError('Error sending message "{}" with error code {}:\nResponse: {}'
-                             .format(buffer, err_code, resp))
+            raise ValueError(
+                'Error sending message "{}" with error code {}:\nResponse: {}'
+                .format(buffer, err_code, resp)
+            )
 
     def get_val(self, path):
         """Get the value of the variable located at "path".

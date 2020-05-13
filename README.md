@@ -65,10 +65,8 @@ performance and should thus be given preference.
 If you cannot use conda, or do not want to, then you must install the following
 packages (e.g., with `pip` or the system package manager):
 
-- [Python](http://www.python.org) (version 2.7 or 3.x, tested with 2.7 and
-  3.3), and
-- [Tornado](http://www.tornadoweb.org) (tested with 4.0.1; earlier versions
-  tested with 3.1.1).
+- [Python](http://www.python.org) (version 3.x, tested with 3.7), and
+- [Tornado](http://www.tornadoweb.org) (tested with 6.0.3).
 
 ## Users Guide
 

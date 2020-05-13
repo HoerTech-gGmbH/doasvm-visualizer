@@ -1,5 +1,3 @@
-from __future__ import division
-
 import json
 
 from MHAConnection import MHAConnection
@@ -65,10 +63,10 @@ class LoopingWebSocket(server_common.MyWebSocketHandler):
             elif 'beamformer' in message:
                 print('Beamformer = {}'.format(message['beamformer']))
                 with MHAConnection(self.mha_host, self.mha_port, self.interval) as mha_conn:
-                    if(message['beamformer']==False):
-                        mha_conn.set_val(b'mha.doachain.post.select',"NoBf")
-                    elif(message['beamformer']==True):
-                        mha_conn.set_val(b'mha.doachain.post.select',"Bf")
+                    if message['beamformer'] is False:
+                        mha_conn.set_val(b'mha.doachain.post.select', "NoBf")
+                    elif message['beamformer'] is True:
+                        mha_conn.set_val(b'mha.doachain.post.select', "Bf")
                     else:
                         print('Unknown message "{}"'.format(message))
             elif 'new_interval' in message:
@@ -78,6 +76,7 @@ class LoopingWebSocket(server_common.MyWebSocketHandler):
                 print('Unknown message "{}"'.format(message))
         except Exception as e:
             print("Error handling message \"{}\": {}".format(message, e))
+
 
 if __name__ == '__main__':
 
