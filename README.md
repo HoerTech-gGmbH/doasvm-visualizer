@@ -105,15 +105,15 @@ over a WebSocket in the form of plain JSON (i.e., the data is sent as a string,
 as opposed to being serialised and transferred as binary data).
 
 The MHA Python server fulfills two purposes: it *serves* the web applications
-over HTTP (thus enabling remote viewing), and it acts as a *bridge* between the
-web application and an MHA instance.  For the latter, it receives commands from
-the web app over the aforementioned WebSocket, and communicates with an MHA
-instance over TCP via MHA's simple network protocol (see the file
-`MHAConnection.py` for the details).  Note that the TCP connection is made
-on-demand, in order to accommodate other MHA clients, since the MHA only
-supports a single TCP connection.  However, this does not appear to add an
-appreciable amount of overhead.  Both the HTTP and WebSocket components are
-implemented with the [Tornado](http://www.tornadoweb.org/) Python library.
+over HTTP, and it acts as a *bridge* between the web application and an MHA
+instance.  For the latter, it receives commands from the web app over the
+aforementioned WebSocket, and communicates with an MHA instance over TCP via
+MHA's simple network protocol (see the file `MHAConnection.py` for the
+details).  Note that the TCP connection is made on-demand, in order to
+accommodate other MHA clients, since the MHA only supports a single TCP
+connection.  However, this does not appear to add an appreciable amount of
+overhead.  Both the HTTP and WebSocket components are implemented with the
+[Tornado](http://www.tornadoweb.org/) Python library.
 
 In summary, the basic network structure looks like this:
 
@@ -140,6 +140,21 @@ connection.  Additionally, the test file `./tools/test_tcp_server.m` is
 provided for MATLAB/Octave, which sends test data to the TCP server. See the
 documentation in the aforementioned files for more information (e.g., `help
 test_tcp_server`, `pydoc connect_to_webapp.py`).
+
+### A Note on HTTPS
+
+Current versions of modern web browsers such as Chrome/Chromium and Firefox
+forbid access to local devices over plain HTTP, unless the connection is to a
+local document or server (i.e., to `localhost`).  This affects the webcam
+support of the visualisation.  Therefor, if you:
+
+1. want to run the MHA Python server on a different host than the
+   visualisation, and
+2. want the visualisation to still be able to access the webcam,
+
+you will need to deal with this.  For example, you can set up your own reverse
+proxy that handles the SSL connection itself, see, e.g., [this
+document](https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/).
 
 ### The Visualisation Web Applications
 
