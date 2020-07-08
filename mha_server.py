@@ -48,7 +48,7 @@ class LoopingWebSocket(server_common.MyWebSocketHandler):
 
         super(LoopingWebSocket, self).__init__(*args, **kwargs)
 
-    def _reopen_mhaconn(self):
+    def _reopen_mhacon(self):
 
         self._mha_conn.close()
         self._mha_conn.open(self.mha_host, self.mha_port, self.interval)
