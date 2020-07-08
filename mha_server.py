@@ -1,6 +1,6 @@
 import json
 
-from MHAConnection import MHAConnection
+from OpenMHA import MHAConnection
 import server_common
 
 
@@ -11,10 +11,10 @@ def handle_conn_errors(func):
             func(*args, **kwargs)
         except TimeoutError as e:
             print(f"Connection timed out ({e}), attempting to reopen.")
-            func.__self__._reopen_mhacon()
+            func.__self__._reopen()
         except BrokenPipeError as e:
             print(f"Connection broekn ({e}), attempting to reopen.")
-            func.__self__._reopen_mhacon()
+            func.__self__._reopen()
         except Exception as e:
             print("Error handling message \"{}\": {}".format(
                 (args if args else kwargs), e
@@ -48,21 +48,16 @@ class LoopingWebSocket(server_common.MyWebSocketHandler):
 
         super(LoopingWebSocket, self).__init__(*args, **kwargs)
 
-    def _reopen_mhacon(self):
-
-        self._mha_conn.close()
-        self._mha_conn.open(self.mha_host, self.mha_port, self.interval)
-
     def _send_data(self):
 
         try:
-            p = self._mha_conn.get_val_converted(self._pool_path)
+            p = self._mha_conn.get_val(self._pool_path)
             self.write_message(json.dumps({'data': p}))
         except ValueError as e:
             print(f"Error sending data: {e}")
         except TimeoutError as e:
             print(f"Connection timed out ({e}), attempting to reopen.")
-            self._reopen_mhacon()
+            self._mha_conn._reopen()
 
     @handle_conn_errors
     def on_message(self, message):
@@ -153,7 +148,7 @@ if __name__ == '__main__':
             classification_id = args.classification_id.decode()
             exit('Error: Could not find plug-in with ID "' + classification_id
                  + '"')
-        angles = mha_conn.get_val_converted(plugin_path[0] + b'.angles')
+        angles = mha_conn.get_val(plugin_path[0] + b'.angles')
 
     ws_args = (
         LoopingWebSocket, {'mha_host': args.mha_host,
