@@ -41,9 +41,8 @@ class LoopingWebSocket(server_common.MyWebSocketHandler):
         # If --pool-path was not passed, default to looking for a monitoring
         # plug-in in the same namespace as the acPooling_wave plug-in.
         if not pool_path:
-            mon_path = self._plugin_path.replace(self.pooling_id,
-                                                 b'doasvm_mon')
-            pool_path = mon_path + b'.pool'
+            mon_path = self._plugin_path.replace(self.pooling_id, 'doasvm_mon')
+            pool_path = mon_path + '.pool'
         self._pool_path = pool_path
 
         super(LoopingWebSocket, self).__init__(*args, **kwargs)
@@ -70,15 +69,15 @@ class LoopingWebSocket(server_common.MyWebSocketHandler):
                 print('Unknown command "{}"'.format(message['command']))
         elif 'new_pooling_wndlen' in message:
             print(f'Pooling wndlen = {message["new_pooling_wndlen"]}')
-            self._mha_conn.set_val(self._plugin_path + b'.pooling_wndlen',
+            self._mha_conn.set_val(self._plugin_path + '.pooling_wndlen',
                                    message['new_pooling_wndlen'])
         elif 'new_pooling_alpha' in message:
             print(f'Pooling alpha = {message["new_pooling_alpha"]}')
-            self._mha_conn.set_val(self._plugin_path + b'.alpha',
+            self._mha_conn.set_val(self._plugin_path + '.alpha',
                                    message['new_pooling_alpha'])
         elif 'new_pooling_type' in message:
             print(f'Pooling type = {message["new_pooling_type"]}')
-            self._mha_conn.set_val(self._plugin_path + b'.pooling_type',
+            self._mha_conn.set_val(self._plugin_path + '.pooling_type',
                                    message['new_pooling_type'])
         elif 'beamformer' in message:
             print(f'Beamformer = {message["beamformer"]}')
@@ -114,8 +113,8 @@ if __name__ == '__main__':
     )
     parser.add_argument(
         '--classification-id',
-        default=b'svm',
-        type=lambda s: (s if type(s) == bytes else s.encode()),
+        default='svm',
+        type=str,
         help="""The ID of a doasvm_classification instance.  This is used to
         fetch the "angles" variable in order to pass additional parameters to
         the web app.
@@ -123,16 +122,16 @@ if __name__ == '__main__':
     )
     parser.add_argument(
         '--pooling-id',
-        default=b'pool',
-        type=lambda s: (s if type(s) == bytes else s.encode()),
+        default='pool',
+        type=str,
         help="""The ID of the desired acPooling_wave instance.  This is the
         instance that will be controlled from the web app.
         """
     )
     parser.add_argument(
         '--pool-path',
-        default=b'mha.doachain.doasvm_mon.pool',
-        type=lambda s: (s if type(s) == bytes else s.encode()),
+        default='mha.doachain.doasvm_mon.pool',
+        type=str,
         help="""The full path to the desired "pool" variable to visualise.  If
         unset, it is assumed that a doasvm_mon instance (named "doasvm_mon")
         exists in the same namespace as the pooling plug-in specified by
@@ -145,10 +144,9 @@ if __name__ == '__main__':
     with MHAConnection(args.mha_host, args.mha_port, 5) as mha_conn:
         plugin_path = mha_conn.find_id(args.classification_id)
         if not plugin_path:
-            classification_id = args.classification_id.decode()
-            exit('Error: Could not find plug-in with ID "' + classification_id
-                 + '"')
-        angles = mha_conn.get_val(plugin_path[0] + b'.angles')
+            exit('Error: Could not find plug-in with ID'
+                 f'"{args.classification_id}"')
+        angles = mha_conn.get_val(plugin_path[0] + '.angles')
 
     ws_args = (
         LoopingWebSocket, {'mha_host': args.mha_host,
